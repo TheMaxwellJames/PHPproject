@@ -35,9 +35,28 @@ if (isset($_GET['delete_id'])) {
   mysqli_query($data, $deleteQuery);
 }
 
-$query = "SELECT * FROM student";
+// Handle search
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $searchValue = $_POST['search'];
+
+  // Modify the query to include the search condition
+  $query = "SELECT * FROM student WHERE name LIKE '%$searchValue%' OR phone LIKE '%$searchValue%'";
+} else {
+  // Default query to fetch all students
+  $query = "SELECT * FROM student";
+}
+
 $result = mysqli_query($data, $query);
 ?>
+
+<div class="mb-3">
+  <form method="POST">
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="Search by name or phone" name="search">
+      <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+  </form>
+</div>
 
 <a href="index.php" class="btn btn-primary return-link">Index</a>
 
@@ -60,7 +79,7 @@ $result = mysqli_query($data, $query);
         <td><img src="<?php echo $info['image']; ?>" alt="Student Image" width="100"></td>
         <td>
           <a href="update.php?id=<?php echo $info['id']; ?>" class="btn btn-primary btn-sm">Update</a>
-          <a href="?delete_id=<?php echo $info['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Sure to delete?')">Delete</a>
+          <a href="?delete_id=<?php echo $info['id']; ?>" class="btn btn-danger btn-sm"  onclick="return confirm('Sure to delete?')">Delete</a>
         </td>
       </tr>
     <?php } ?>
